@@ -131,10 +131,6 @@ try:
             if not csv_data['exc'].empty and not csv_data['exc'][csv_data['exc'].iloc[:,0] == jk].empty:
                 score -= 30; summ.append("기수주의"); tags.append('<span class="tag" style="background:#FF3366; color:white;">⚔️기수상극</span>')
 
-            # 3. 마방(조교사) 상극 체크 (추가된 부분!)
-            if not csv_data['exc_tr'].empty and not csv_data['exc_tr'][csv_data['exc_tr'].iloc[:,0] == tr].empty:
-                score -= 20; summ.append("마방주의"); tags.append('<span class="tag" style="background:#EF4444; color:white;">⚠️마방상극</span>')
-
             # 4. 리턴 승부마 체크 (엑셀에 '리턴' 정보가 있다면)
             if h.get('return_yn', '') == 'Y':
                 score += 10; summ.append("리턴승부"); tags.append('<span class="tag" style="background:#10B981; color:white;">🔄리턴승부</span>')
