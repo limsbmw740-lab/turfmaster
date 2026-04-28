@@ -1356,24 +1356,30 @@ def analyze_today_trend():
     if inner_gate_ratio >= 0.5: trend += "[인코스 유리] "
     
     return trend
-# --- (여기서부터 맨 밑에 붙여넣기) ---
-st.markdown("---") # 화면에 가로줄 긋기
-st.subheader("🤖 터프마스터 AI 비서")
+# 반드시 이 영어 상태 그대로 붙여넣어 지는지 확인하세요!
+tab1, tab2 = st.tabs(["📊 데이터 분석 로직", "🤖 AI 비서 상담"])
 
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "엤썰!! 터프마스터 AI 준비 완료! 오늘 주로 수분 상태나 피보나치 배팅 전략에 대해 질문하십시오!"}
-    ]
+with tab1:
+    st.header("기존 데이터 분석 화면")
+    # 여기에 기존 코드 붙여넣기
 
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+with tab2:
+    st.header("다크모드 AI 채팅방")
+    
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "assistant", "content": "엤썰!! 터프마스터 AI 준비 완료! 질문하십시오!"}
+        ]
 
-if prompt := st.chat_input("질문을 입력하세요 (예: 4경주 7번 말 어때?)"):
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-    with st.chat_message("assistant"):
-        st.markdown(f"엤썰!! '{prompt}'에 대한 분석입니다. 수분 함량 데이터와 피보나치 시스템을 바탕으로 계산 중입니다...")
-    st.session_state.messages.append({"role": "assistant", "content": f"엤썰!! '{prompt}'에 대한 분석입니다..."})
+    if prompt := st.chat_input("질문을 입력하세요"):
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        with st.chat_message("assistant"):
+            st.markdown("엤썰!! 데이터 분석을 바탕으로 답변을 준비 중입니다...")
+            st.session_state.messages.append({"role": "assistant", "content": "엤썰!! 데이터 분석을 바탕으로 답변을 준비 중입니다..."})
