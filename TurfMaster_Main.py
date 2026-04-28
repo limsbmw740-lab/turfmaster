@@ -122,18 +122,30 @@ try:
             if wg <= 53.0: score += 3; tags.append('<span class="tag" style="background:#00D1FF; color:black;">🪶경량</span>')
             elif wg >= 57.0: score -= 3; tags.append('<span class="tag" style="background:#555;">🏋️중량</span>')
 
-            # --- [가점 로직 2] 인적 네트워크 (CSV) ---
-            # 1. 인마합 (최강조합: 기수+조교사)
+            # --- [가점 로직 2] 인적 네트워크 (태그 추가 버전) ---
+            # 1. 인마합 (최강조합)
             if not csv_data['syn'].empty and not csv_data['syn'][(csv_data['syn'].iloc[:,0] == jk) & (csv_data['syn'].iloc[:,1] == tr)].empty:
-                score += 30; summ.append("인마합"); tags.append('<span class="tag" style="background:#A855F7; color:white;">❤️최강조합</span>')
+                score += 30
+                summ.append("인마합")
+                # 👇 여기가 핵심! tags에 추가해야 '경량' 옆에 나란히 뜹니다.
+                tags.append('<span class="tag" style="background:#A855F7; color:white;">❤️최강조합</span>')
             
             # 2. 기수 상극 체크
             if not csv_data['exc'].empty and not csv_data['exc'][csv_data['exc'].iloc[:,0] == jk].empty:
-                score -= 30; summ.append("기수주의"); tags.append('<span class="tag" style="background:#FF3366; color:white;">⚔️기수상극</span>')
+                score -= 30
+                summ.append("기수주의")
+                # 👇 상극 태그 추가
+                tags.append('<span class="tag" style="background:#FF3366; color:white;">⚔️기수주의</span>')
 
+            # 3. 견제/주의 등 기타 로직 (있다면 똑같이 tags.append 추가)
+            if "견제" in h and h.get("견제", "") == "Y":
+                tags.append('<span class="tag" style="background:#FFA500; color:white;">📢견제</span>')
+
+            
             # 4. 리턴 승부마 체크 (엑셀에 '리턴' 정보가 있다면)
             if h.get('return_yn', '') == 'Y':
                 score += 10; summ.append("리턴승부"); tags.append('<span class="tag" style="background:#10B981; color:white;">🔄리턴승부</span>')
+            
             # --- [가점 로직 3] 마체중 분석 (API + CSV) ---
             if not df_w.empty:
                 w_info = df_w[df_w['hrName'] == hr]
