@@ -2,6 +2,13 @@ import streamlit as st
 import pandas as pd
 import requests
 import os
+import google.generativeai as genai  # 이 줄이 있는지 먼저 확인!
+
+# 1. AI 열쇠(API KEY) 설정 (깃허브 Secrets에 등록된 이름을 쓰세요)
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+
+# 2. 'model'이라는 이름으로 AI 비서를 정의합니다 (이게 핵심!)
+model = genai.GenerativeModel('gemini-1.5-flash-latest')
 from datetime import datetime
 
 # 데이터 안전 변환 함수
@@ -1384,19 +1391,35 @@ with tab2:
     
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "엤썰!! 터프마스터 AI 준비 완료! 질문하십시오!"}
+            {"role": "assistant", "content": "엤썰!! 터프마스터 AI 준비 완료! 무엇이든 물어보십시오!"}
         ]
 
+    # 1. 기존 대화 내용 표시
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    if prompt := st.chat_input("질문을 입력하세요"):
+    # 2. 사용자 입력 처리
+    if prompt := st.chat_input("오늘의 경주 분석을 물어보세요!"):
         with st.chat_message("user"):
             st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
 
+        # 3. AI 답변 생성 (이 부분이 핵심!)
         with st.chat_message("assistant"):
-            st.markdown("엤썰!! 데이터 분석을 바탕으로 답변을 준비 중입니다...")
-            st.session_state.messages.append({"role": "assistant", "content": "엤썰!! 데이터 분석을 바탕으로 답변을 준비 중입니다..."})
-        
+            message_placeholder = st.empty()
+            full_response = ""
+            
+            try:
+                # [중요] 여기서 실제 AI 모델을 호출해야 합니다!
+                # 만약 Gemini를 쓰신다면 아래와 같은 형식이 됩니다.
+                response = model.generate_content(prompt) 
+                full_response = response.text
+                
+                message_placeholder.markdown(full_response)
+                st.session_state.messages.append({"role": "assistant", "content": full_response})
+            
+            except Exception as e:
+                error_msg = "엤썰!! 통신 중에 일시적인 오류가 발생했습니다. 다시 시도해 주십시오!"
+                st.error(f"오류 내용: {e}")
+                message_placeholder.markdown(error_msg)
