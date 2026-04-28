@@ -1356,3 +1356,24 @@ def analyze_today_trend():
     if inner_gate_ratio >= 0.5: trend += "[인코스 유리] "
     
     return trend
+# --- (여기서부터 맨 밑에 붙여넣기) ---
+st.markdown("---") # 화면에 가로줄 긋기
+st.subheader("🤖 터프마스터 AI 비서")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": "엤썰!! 터프마스터 AI 준비 완료! 오늘 주로 수분 상태나 피보나치 배팅 전략에 대해 질문하십시오!"}
+    ]
+
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+if prompt := st.chat_input("질문을 입력하세요 (예: 4경주 7번 말 어때?)"):
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+    with st.chat_message("assistant"):
+        st.markdown(f"엤썰!! '{prompt}'에 대한 분석입니다. 수분 함량 데이터와 피보나치 시스템을 바탕으로 계산 중입니다...")
+    st.session_state.messages.append({"role": "assistant", "content": f"엤썰!! '{prompt}'에 대한 분석입니다..."})
