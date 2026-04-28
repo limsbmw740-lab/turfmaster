@@ -1356,3 +1356,63 @@ def analyze_today_trend():
     if inner_gate_ratio >= 0.5: trend += "[인코스 유리] "
     
     return trend
+import streamlit as st
+import pandas as pd
+import time
+
+# 화면 넒게 쓰기 (기존에 있던 설정이면 그대로 두셔도 됩니다)
+st.set_page_config(page_title="터프마스터 AI 통합본", page_icon="🏇", layout="wide")
+
+st.title("🏇 터프마스터 통합 분석 센터")
+
+# 💡 핵심! 두 개의 탭(메뉴) 만들기
+tab1, tab2 = st.tabs(["📊 데이터 분석 로직", "🤖 AI 비서 상담 (수분/피보나치)"])
+
+# ==========================================
+# 탭 1: 기존에 사용자님이 만드신 코드 넣는 곳
+# ==========================================
+with tab1:
+    st.header("기존 데이터 분석 화면")
+    st.write("여기에 원래 엑셀 불러오고 표 보여주던 코드가 들어갑니다.")
+    
+    # ⚠️ [주의] 원래 TurfMaster_Main.py 에 있던 코드를 
+    # 이 아래에 그대로 복사해서 붙여넣으세요! 
+    # (단, 줄을 맞추기 위해 키보드 'Tab' 키를 눌러서 들여쓰기를 한 번씩 해주시면 완벽합니다)
+
+
+# ==========================================
+# 탭 2: 방금 만든 AI 채팅 비서 넣는 곳
+# ==========================================
+with tab2:
+    st.header("다크모드 AI 채팅방")
+    
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "assistant", "content": "엤썰!! 터프마스터 AI 준비 완료! 오늘 주로 수분 상태나 피보나치 전략에 대해 질문하십시오!"}
+        ]
+
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    if prompt := st.chat_input("질문을 입력하세요 (예: 4경주 7번 말 어때?)"):
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+            full_response = ""
+            
+            # AI 답변 내용
+            ai_answer = f"엤썰!! 입력하신 '{prompt}'에 대한 분석입니다.\n\n"
+            ai_answer += "수분 함량 데이터와 피보나치 배팅 시스템을 교차 검증한 결과...\n"
+            ai_answer += "(여기에 진짜 AI 분석이 들어가게 됩니다!)"
+
+            for chunk in ai_answer.split():
+                full_response += chunk + " "
+                time.sleep(0.1)
+                message_placeholder.markdown(full_response + "▌")
+            message_placeholder.markdown(full_response)
+            
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
