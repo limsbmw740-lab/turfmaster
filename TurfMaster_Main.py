@@ -117,19 +117,27 @@ try:
             # --- [가점 로직 1] 기본 능력치 ---
             score += (rating * 0.3)
             if rating > 0: tags.append(f'<span class="tag" style="background:#444;">R:{rating}</span>')
-
             if age in [3, 4]: score += 5; tags.append('<span class="tag" style="background:#A855F7;">🔥전성기</span>')
             elif age >= 7: score -= 3
-
             if wg <= 53.0: score += 3; tags.append('<span class="tag" style="background:#00D1FF; color:black;">🪶경량</span>')
             elif wg >= 57.0: score -= 3; tags.append('<span class="tag" style="background:#555;">🏋️중량</span>')
 
             # --- [가점 로직 2] 인적 네트워크 (CSV) ---
+            # 1. 인마합 (최강조합: 기수+조교사)
             if not csv_data['syn'].empty and not csv_data['syn'][(csv_data['syn'].iloc[:,0] == jk) & (csv_data['syn'].iloc[:,1] == tr)].empty:
                 score += 30; summ.append("인마합"); tags.append('<span class="tag" style="background:#A855F7; color:white;">❤️최강조합</span>')
+            
+            # 2. 기수 상극 체크
             if not csv_data['exc'].empty and not csv_data['exc'][csv_data['exc'].iloc[:,0] == jk].empty:
-                score -= 30; summ.append("기수주의"); tags.append('<span class="tag" style="background:#FF3366; color:white;">⚔️상극</span>')
+                score -= 30; summ.append("기수주의"); tags.append('<span class="tag" style="background:#FF3366; color:white;">⚔️기수상극</span>')
 
+            # 3. 마방(조교사) 상극 체크 (추가된 부분!)
+            if not csv_data['exc_tr'].empty and not csv_data['exc_tr'][csv_data['exc_tr'].iloc[:,0] == tr].empty:
+                score -= 20; summ.append("마방주의"); tags.append('<span class="tag" style="background:#EF4444; color:white;">⚠️마방상극</span>')
+
+            # 4. 리턴 승부마 체크 (엑셀에 '리턴' 정보가 있다면)
+            if h.get('return_yn', '') == 'Y':
+                score += 10; summ.append("리턴승부"); tags.append('<span class="tag" style="background:#10B981; color:white;">🔄리턴승부</span>')
             # --- [가점 로직 3] 마체중 분석 (API + CSV) ---
             if not df_w.empty:
                 w_info = df_w[df_w['hrName'] == hr]
@@ -1383,3 +1391,4 @@ with tab2:
         with st.chat_message("assistant"):
             st.markdown("엤썰!! 데이터 분석을 바탕으로 답변을 준비 중입니다...")
             st.session_state.messages.append({"role": "assistant", "content": "엤썰!! 데이터 분석을 바탕으로 답변을 준비 중입니다..."})
+        
