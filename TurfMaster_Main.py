@@ -6,7 +6,8 @@ import google.generativeai as genai  # 이 줄이 있는지 먼저 확인!
 
 # 1. AI 열쇠(API KEY) 설정 (깃허브 Secrets에 등록된 이름을 쓰세요)
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-
+# 8번 줄 바로 아래에 추가하세요!
+os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 # 2. 'model'이라는 이름으로 AI 비서를 정의합니다 (이게 핵심!)
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 from datetime import datetime
