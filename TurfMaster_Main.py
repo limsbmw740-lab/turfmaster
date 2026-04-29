@@ -2,14 +2,17 @@ import streamlit as st
 import pandas as pd
 import requests
 import os
-import google.generativeai as genai  # 이 줄이 있는지 먼저 확인!
+import google.generativeai as genai
 
-# 1. AI 열쇠(API KEY) 설정 (깃허브 Secrets에 등록된 이름을 쓰세요)
+import google.generativeai as genai
+import streamlit as st
+
+# 설정은 딱 이렇게만!
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-# 8번 줄 바로 아래에 추가하세요!
-os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
-# 2. 'model'이라는 이름으로 AI 비서를 정의합니다 (이게 핵심!)
-model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
+# 모델 이름은 'gemini-1.5-flash' 딱 하나만 남기세요!
+model = genai.GenerativeModel('gemini-1.5-flash')
+
 from datetime import datetime
 
 # 데이터 안전 변환 함수
@@ -71,13 +74,29 @@ def load_csv():
 
 csv_data = load_csv()
 
-# 3. 사이드바
 with st.sidebar:
-    st.markdown("### 📅 기본 설정")
-    target_date = st.date_input("날짜 선택", datetime.now())
-    meet = st.selectbox("경마장 선택", ["서울 (1)", "제주 (2)", "부산 (3)"], index=0)
+    # 1. 상단 타이틀 (멋진 디자인)
+    st.markdown("## 🏇 **TurfMaster AI**")
+    st.caption("v2.0 통합 가점제 엔진 탑재")
+    st.markdown("---")
+
+    # 2. 날짜 및 경마장 선택 (기존 기능을 이쁘게!)
+    st.markdown("### 📅 **기본 설정**")
+    target_date = st.date_input("📅 분석 날짜 선택", datetime.now())
+    meet = st.selectbox("🏟️ 경마장 선택", ["서울 (1)", "제주 (2)", "부산 (3)"])
+    
+    # 데이터 처리를 위한 기존 코드 (유지)
     meet_code = meet.split("(")[1].replace(")", "")
     formatted_date = target_date.strftime('%Y%m%d')
+    
+    st.markdown("---")
+
+    # 3. 안내 문구 (파란색 박스)
+    st.info("선택하신 날짜와 경마장의 데이터를 기반으로 AI가 승률을 분석합니다.")
+    
+    # 4. 하단 저작권 표시
+    st.markdown("---")
+    st.caption("© 2026 TurfMaster AI | ISFJ-T Edition")
 
 st.markdown('<h1 class="main-title">터프 마스터 V20 (통합 가점제 엔진)</h1>', unsafe_allow_html=True)
 
