@@ -6,13 +6,16 @@ import streamlit as st
 import google.generativeai as genai
 from datetime import datetime
 
-# 1. AI 접속 통로 최신화 (404 에러 잡는 핵심!)
-genai.configure(
-    api_key=st.secrets["GOOGLE_API_KEY"],
-    transport='rest'
-)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# 11번 줄부터 14번 줄까지를 이렇게 바꿔보세요!
 
+# 1. 아까 찾은 열쇠를 변수에 저장합니다.
+GOOGLE_API_KEY = "AIzaSyDulYo2kJnUGm1BGJw6Q_ah_NJ6sMiOiRU"
+
+# 2. 구글 AI 설정을 합니다. (주소 빼고 깔끔하게!)
+genai.configure(api_key=GOOGLE_API_KEY)
+
+# 3. 모델을 설정합니다. (models/ 빼고 이름만!)
+model = genai.GenerativeModel('gemini-1.5-flash')
 # 2. 사이드바 디자인 (전문가용 레이아웃)
 with st.sidebar:
     st.markdown("## 🏇 **TurfMaster AI**")
