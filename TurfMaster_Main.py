@@ -2,18 +2,34 @@ import streamlit as st
 import pandas as pd
 import requests
 import os
-import google.generativeai as genai
-
-import google.generativeai as genai
 import streamlit as st
+import google.generativeai as genai
+from datetime import datetime
 
-# 설정은 딱 이렇게만!
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-
-# 모델 이름은 'gemini-1.5-flash' 딱 하나만 남기세요!
+# 1. AI 접속 통로 최신화 (404 에러 잡는 핵심!)
+genai.configure(
+    api_key=st.secrets["GOOGLE_API_KEY"],
+    transport='rest'
+)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-from datetime import datetime
+# 2. 사이드바 디자인 (전문가용 레이아웃)
+with st.sidebar:
+    st.markdown("## 🏇 **TurfMaster AI**")
+    st.caption("v2.0 전문가용 분석 엔진")
+    st.markdown("---")
+    
+    st.markdown("### 📅 **기본 설정**")
+    target_date = st.date_input("날짜 선택", datetime.now())
+    meet = st.selectbox("🏟️ 경마장 선택", ["서울 (1)", "제주 (2)", "부산 (3)"], key="meet_selectbox_2")
+    
+    # [중요] 기존 코드와 연결되는 변수 이름들입니다.
+    meet_code = meet.split("(")[1].replace(")", "")
+    formatted_date = target_date.strftime('%Y%m%d')
+    
+    st.markdown("---")
+    st.info("데이터 분석 준비 완료.")
+    st.markdown("---")
 
 # 데이터 안전 변환 함수
 def safe_int(val, default=0):
@@ -79,11 +95,6 @@ with st.sidebar:
     st.markdown("## 🏇 **TurfMaster AI**")
     st.caption("v2.0 통합 가점제 엔진 탑재")
     st.markdown("---")
-
-    # 2. 날짜 및 경마장 선택 (기존 기능을 이쁘게!)
-    st.markdown("### 📅 **기본 설정**")
-    target_date = st.date_input("📅 분석 날짜 선택", datetime.now())
-    meet = st.selectbox("🏟️ 경마장 선택", ["서울 (1)", "제주 (2)", "부산 (3)"])
     
     # 데이터 처리를 위한 기존 코드 (유지)
     meet_code = meet.split("(")[1].replace(")", "")
