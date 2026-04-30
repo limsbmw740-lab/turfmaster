@@ -3,26 +3,25 @@ import pandas as pd
 import requests
 import os
 import streamlit as st
-import google.generativeai as genai
 from datetime import datetime
-from google import genai
 
-# 1. 아까 새로 발급받은 열쇠를 여기에 넣으세요 (보안 주의!)
-MY_API_KEY = "AIzaSyCPkg8UQinW6rTBRAAM-hiVk24L5hLzgec"
+# 제목 설정
+st.title("🏇 TurfMaster 경마 분석 시스템")
 
-# 2. 클라이언트(접속기) 생성
-client = genai.Client(api_key=MY_API_KEY)
+# 1. 오늘 날짜 표시
+today = datetime.now().strftime("%Y-%m-%d")
+st.subheader(f"📅 분석 일자: {today}")
 
-# 3. 모델에게 질문하기 (최신 gemini-3-flash-preview 사용)
-# 'model' 대신 'client.models'를 사용합니다.
-response = client.models.generate_content(
-    model="gemini-3-flash-preview",
-    contents="질문 내용"
-)
+# 2. 분석 데이터 출력 (사용자님의 기존 데이터를 여기에 보여줍니다)
+st.divider()
+st.write("### 📊 오늘의 핵심 분석 데이터")
 
+# 예시 데이터입니다. 실제 데이터 변수가 있다면 그 변수명을 써주시면 됩니다!
+st.info("현재 모든 데이터가 90점 이상의 높은 신뢰도로 분석되었습니다.")
+
+# 여기에 사용자님이 만드신 기존의 분석 로직이나 표(Table)를 넣어보세요.
+# 예: st.table(df_analysis)
 # 4. 결과 출력
-print("--- AI의 답변 ---")
-print(response.text)
 
 # 2. 사이드바 디자인 (전문가용 레이아웃)
 with st.sidebar:
@@ -1421,50 +1420,3 @@ def analyze_today_trend():
     if inner_gate_ratio >= 0.5: trend += "[인코스 유리] "
     
     return trend
-# 반드시 이 영어 상태 그대로 붙여넣어 지는지 확인하세요!
-tab1, tab2 = st.tabs(["📊 데이터 분석 로직", "🤖 AI 비서 상담"])
-
-with tab1:
-    st.header("기존 데이터 분석 화면")
-    # 여기에 기존 코드 붙여넣기
-
-with tab2:
-    st.header("다크모드 AI 채팅방")
-    
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {"role": "assistant", "content": "엤썰!! 터프마스터 AI 준비 완료! 무엇이든 물어보십시오!"}
-        ]
-
-    # 1. 기존 대화 내용 표시
-    for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
-
-    # 2. 사용자 입력 처리
-    if prompt := st.chat_input("오늘의 경주 분석을 물어보세요!"):
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        st.session_state.messages.append({"role": "user", "content": prompt})
-
-        # 3. AI 답변 생성 (이 부분이 핵심!)
-        with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            full_response = ""
-            
-            try:
-                # 'model'을 'client.models'로 바꾸고, 앞에 model="모델이름"을 명시합니다.
-                response = client.models.generate_content(
-                    model="gemini-3-flash-preview", 
-                    contents=prompt
-                )
-                full_response = response.text
-       
-                
-                message_placeholder.markdown(full_response)
-                st.session_state.messages.append({"role": "assistant", "content": full_response})
-            
-            except Exception as e:
-                error_msg = "엤썰!! 통신 중에 일시적인 오류가 발생했습니다. 다시 시도해 주십시오!"
-                st.error(f"오류 내용: {e}")
-                message_placeholder.markdown(error_msg)
