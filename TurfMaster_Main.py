@@ -5,17 +5,25 @@ import os
 import streamlit as st
 import google.generativeai as genai
 from datetime import datetime
+from google import genai
 
-# 11번 줄부터 14번 줄까지를 이렇게 바꿔보세요!
+# 1. 아까 새로 발급받은 열쇠를 여기에 넣으세요 (보안 주의!)
+MY_API_KEY = "AIzaSyCPkg8UQinW6rTBRAAM-hiVk24L5hLzgec"
 
-# 1. 아까 찾은 열쇠를 변수에 저장합니다.
-GOOGLE_API_KEY = "AIzaSyDulYo2kJnUGm1BGJw6Q_ah_NJ6sMiOiRU"
+# 2. 클라이언트(접속기) 생성
+client = genai.Client(api_key=MY_API_KEY)
 
-# 2. 구글 AI 설정을 합니다. (주소 빼고 깔끔하게!)
-genai.configure(api_key=GOOGLE_API_KEY)
+# 3. 모델에게 질문하기 (최신 gemini-3-flash-preview 사용)
+# 'model' 대신 'client.models'를 사용합니다.
+response = client.models.generate_content(
+    model="gemini-3-flash-preview",
+    contents="질문 내용"
+)
 
-# 3. 모델을 설정합니다. (models/ 빼고 이름만!)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# 4. 결과 출력
+print("--- AI의 답변 ---")
+print(response.text)
+
 # 2. 사이드바 디자인 (전문가용 레이아웃)
 with st.sidebar:
     st.markdown("## 🏇 **TurfMaster AI**")
@@ -1445,10 +1453,13 @@ with tab2:
             full_response = ""
             
             try:
-                # [중요] 여기서 실제 AI 모델을 호출해야 합니다!
-                # 만약 Gemini를 쓰신다면 아래와 같은 형식이 됩니다.
-                response = model.generate_content(prompt) 
+                # 'model'을 'client.models'로 바꾸고, 앞에 model="모델이름"을 명시합니다.
+                response = client.models.generate_content(
+                    model="gemini-3-flash-preview", 
+                    contents=prompt
+                )
                 full_response = response.text
+       
                 
                 message_placeholder.markdown(full_response)
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
